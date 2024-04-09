@@ -11,7 +11,9 @@ const cell = `,--------,\n|        |\n|    ${token}   |\n|        |\n'--------'`
 function tictactoe() {
   const currentRound = 0;
   const BOARDSIZE = 3;
-  const winningCombination = [];
+  const verticalWinCombo = [];
+  const horizontalWinCombo = [];
+  const diagonalWinCombo = [];
 
   let currentPlayerToken = "x";
 
@@ -21,17 +23,64 @@ function tictactoe() {
     console.log(`it is ${currentPlayerToken}'s turn`);
   };
 
-  const createGameBoard = (function () {
+  const createGameBoardArray = (function () {
     const gameBoard = ["", "", "", "", "", "", "", "", ""];
-    console.log("game board created");
+    console.log(`game board created (${BOARDSIZE} by ${BOARDSIZE})`);
     return gameBoard;
   })();
 
-  const verticalCombination = function () {
-    // for (let i = 0; i < BOARDSIZE; i++){
-    //     for()
-    // }
-  };
+  function verticalComboGenerator() {
+    const maxCombo = 3;
+    let comboHolder = [];
+    // pattern niya is current column/combo iadd mo sa product ng size * current index(bali 1 to size ng board mo)
+    for (let currentCombo = 1; currentCombo <= maxCombo; currentCombo++) {
+      for (let i = 0; i < BOARDSIZE; i++) {
+        comboHolder.push(i * BOARDSIZE + currentCombo);
+        if (comboHolder.length === 3) {
+          verticalWinCombo.push(comboHolder);
+          comboHolder = [];
+        }
+      }
+    }
+  }
 
-  return { createGameBoard, togglePlayer, verticalCombination };
+  function horizontalComboGenerator() {
+    const maxCombo = 3;
+    let comboHolder = [];
+
+    for (let currentCombo = 0; currentCombo < maxCombo; currentCombo++) {
+      for (let i = 1; i <= BOARDSIZE; i++) {
+        comboHolder.push(currentCombo * BOARDSIZE + i);
+        if (comboHolder.length === 3) {
+          horizontalWinCombo.push(comboHolder);
+          comboHolder = [];
+        }
+      }
+    }
+  }
+
+  function diagonalComboGenerator() {
+    let diag1 = [];
+    let diag2 = [];
+
+    for (let i = 0; i < BOARDSIZE; i++) {
+      diag1.push(i * BOARDSIZE + i + 1);
+    }
+    for (let i = 0; i < BOARDSIZE; i++) {
+      diag2.push((i + 1) * BOARDSIZE - i);
+    }
+
+    diagonalWinCombo.push(diag1);
+    diagonalWinCombo.push(diag2);
+  }
+
+  //  Populate yung winning combo
+  verticalComboGenerator();
+  horizontalComboGenerator();
+  diagonalComboGenerator();
+
+  return {
+    createGameBoardArray,
+    togglePlayer,
+  };
 }
