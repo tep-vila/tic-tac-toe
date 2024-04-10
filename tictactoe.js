@@ -116,7 +116,42 @@ function tictactoe() {
       }
     }
 
+    function compareVertical() {
+      for (let i = 0; i < 3; i++) {
+        if (
+          playGame.winningCombos.verticalWinCombo[i].every((cellPosition) => {
+            console.log(
+              currentPlayerTokenInGameBoardPosition.includes(cellPosition)
+            );
+            return currentPlayerTokenInGameBoardPosition.includes(cellPosition);
+          })
+        ) {
+          isThereAPattern = true;
+        } else {
+          console.log("bokya");
+        }
+      }
+    }
+
+    function compareDiagonal() {
+      for (let i = 0; i < 2; i++) {
+        if (
+          playGame.winningCombos.diagonalWinCombo[i].every((cellPosition) => {
+            console.log(
+              currentPlayerTokenInGameBoardPosition.includes(cellPosition)
+            );
+            return currentPlayerTokenInGameBoardPosition.includes(cellPosition);
+          })
+        ) {
+          isThereAPattern = true;
+        } else {
+          console.log("bokya");
+        }
+      }
+    }
     compareHorizontal();
+    compareVertical();
+    compareDiagonal();
 
     console.log(currentPlayerTokenInGameBoardPosition);
     // need ng gameBoard array, currentPlayer toekn
@@ -181,13 +216,22 @@ const playGame = (function () {
     playGame.gameLogic.putTokenInTable(where, playGame.gameBoard);
 
     if (gameLogic.whatRoundIsIt().currentRound >= 5) {
-      console.log(playGame.gameLogic.checkIfCurrentPlayerWin());
+      if (playGame.gameLogic.checkIfCurrentPlayerWin()) {
+        console.log("You win!");
+        // palitan dapat to ng win logic
+      } else {
+        gameLogic.advanceRound();
+        gameLogic.togglePlayer();
+        console.log(gameLogic.whatRoundIsIt());
+        console.log("toggled");
+      }
     } else {
       gameLogic.advanceRound();
       gameLogic.togglePlayer();
       console.log(gameLogic.whatRoundIsIt());
       console.log("toggled");
     }
+    // pwede pa imrpove tong nesting na to, gawing if round 5 pataas na, tas yung checking ng winner gawin sa switch statement
   };
 
   return { gameLogic, gameBoard, placeToken, winningCombos };
