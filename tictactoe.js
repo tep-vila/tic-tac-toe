@@ -71,6 +71,7 @@ function tictactoe() {
 
   let currentRound = 1;
   let currentPlayerToken = "x";
+  let otherPlayer = "o";
 
   const findCurrentTokenPositionInGameBoard = () => {
     let currentTokenPositionInGameBoard = [];
@@ -78,7 +79,7 @@ function tictactoe() {
       console.log(playGame.gameBoard.length, currentPlayerToken);
       console.log(playGame.gameBoard[i]);
       if (currentPlayerToken === playGame.gameBoard[i]) {
-        currentTokenPositionInGameBoard.push(i);
+        currentTokenPositionInGameBoard.push(i + 1);
       }
     }
     return currentTokenPositionInGameBoard;
@@ -94,10 +95,34 @@ function tictactoe() {
 
   const checkWhoWin = () => {};
 
+  // dapat mag return to ng boolean. pafix. need din ayusin yung sa placetoken -> pag nag false yung sa checkifsum1 won, mag toggle and add siya ng round.
   const checkIfCurrentPlayerWin = () => {
-    console.log(playGame.winningCombos.verticalWinCombo);
+    const currentPlayerTokenInGameBoardPosition =
+      findCurrentTokenPositionInGameBoard();
+    let isThereAPattern = false;
+    console.log(playGame.winningCombos.diagonalWinCombo);
+
+    function compareHorizontal() {
+      for (let i = 0; i < 3; i++) {
+        if (
+          playGame.winningCombos.horizontalWinCombo[i].every((cellPosition) => {
+            return currentPlayerTokenInGameBoardPosition.includes(cellPosition);
+          })
+        ) {
+          isThereAPattern = true;
+        } else {
+          console.log("bokya");
+        }
+      }
+    }
+
+    compareHorizontal();
+
+    console.log(currentPlayerTokenInGameBoardPosition);
     // need ng gameBoard array, currentPlayer toekn
     console.log(playGame.gameBoard);
+
+    return isThereAPattern;
   };
 
   const putTokenInTable = (cell, gameBoard) => {
@@ -109,7 +134,6 @@ function tictactoe() {
   };
 
   const togglePlayer = function () {
-    let otherPlayer = "o";
     [currentPlayerToken, otherPlayer] = [otherPlayer, currentPlayerToken];
     console.log(`it is ${currentPlayerToken}'s turn`);
   };
@@ -157,11 +181,12 @@ const playGame = (function () {
     playGame.gameLogic.putTokenInTable(where, playGame.gameBoard);
 
     if (gameLogic.whatRoundIsIt().currentRound >= 5) {
-      console.log("tite");
-      playGame.gameLogic.checkIfCurrentPlayerWin();
+      console.log(playGame.gameLogic.checkIfCurrentPlayerWin());
     } else {
       gameLogic.advanceRound();
+      gameLogic.togglePlayer();
       console.log(gameLogic.whatRoundIsIt());
+      console.log("toggled");
     }
   };
 
