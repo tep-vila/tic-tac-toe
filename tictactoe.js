@@ -69,8 +69,24 @@ function createWinningCombo(BOARDSIZE) {
 function tictactoe() {
   const BOARDSIZE = 3;
 
-  let currentRound = 0;
+  let currentRound = 1;
   let currentPlayerToken = "x";
+
+  const findCurrentTokenPositionInGameBoard = () => {
+    let currentTokenPositionInGameBoard = [];
+    for (let i = 0; i < playGame.gameBoard.length; i++) {
+      console.log(playGame.gameBoard.length, currentPlayerToken);
+      console.log(playGame.gameBoard[i]);
+      if (currentPlayerToken === playGame.gameBoard[i]) {
+        currentTokenPositionInGameBoard.push(i);
+      }
+    }
+    return currentTokenPositionInGameBoard;
+  };
+
+  const whatRoundIsIt = () => {
+    return { currentRound };
+  };
 
   function advanceRound() {
     currentRound++;
@@ -78,7 +94,19 @@ function tictactoe() {
 
   const checkWhoWin = () => {};
 
-  const checkIfSomeoneWin = () => {};
+  const checkIfCurrentPlayerWin = () => {
+    console.log(playGame.winningCombos.verticalWinCombo);
+    // need ng gameBoard array, currentPlayer toekn
+    console.log(playGame.gameBoard);
+  };
+
+  const putTokenInTable = (cell, gameBoard) => {
+    if (gameBoard[cell] !== "") {
+      console.log("already occupied");
+    } else {
+      gameBoard[cell] = currentPlayerToken;
+    }
+  };
 
   const togglePlayer = function () {
     let otherPlayer = "o";
@@ -97,7 +125,11 @@ function tictactoe() {
     togglePlayer,
     advanceRound,
     checkWhoWin,
-    checkIfSomeoneWin,
+    checkIfCurrentPlayerWin,
+    putTokenInTable,
+    whatRoundIsIt,
+    BOARDSIZE,
+    findCurrentTokenPositionInGameBoard,
   };
 }
 
@@ -115,9 +147,23 @@ function createPlayer(name1, name2) {
   return { name1, name2 };
 }
 
-function playGame() {
+const playGame = (function () {
   const gameLogic = tictactoe();
-  const winningCombos = createWinningCombo();
+  const winningCombos = createWinningCombo(gameLogic.BOARDSIZE);
 
   const gameBoard = gameLogic.createGameBoardArray;
-}
+
+  const placeToken = (where) => {
+    playGame.gameLogic.putTokenInTable(where, playGame.gameBoard);
+
+    if (gameLogic.whatRoundIsIt().currentRound >= 5) {
+      console.log("tite");
+      playGame.gameLogic.checkIfCurrentPlayerWin();
+    } else {
+      gameLogic.advanceRound();
+      console.log(gameLogic.whatRoundIsIt());
+    }
+  };
+
+  return { gameLogic, gameBoard, placeToken, winningCombos };
+})();
