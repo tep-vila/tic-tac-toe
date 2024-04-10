@@ -1,6 +1,3 @@
-const token = "X";
-const cell = `,--------,\n|        |\n|    ${token}   |\n|        |\n'--------'`;
-
 // gameboard array
 // player data
 // winning combination
@@ -8,26 +5,11 @@ const cell = `,--------,\n|        |\n|    ${token}   |\n|        |\n'--------'`
 
 // round 5 dapat mag start ng checking
 
-function tictactoe() {
-  const currentRound = 0;
-  const BOARDSIZE = 3;
+// FUNCTION PANG GAWA NG PATTERN
+function createWinningCombo(BOARDSIZE) {
   const verticalWinCombo = [];
   const horizontalWinCombo = [];
   const diagonalWinCombo = [];
-
-  let currentPlayerToken = "x";
-
-  const togglePlayer = function () {
-    let otherPlayer = "o";
-    [currentPlayerToken, otherPlayer] = [otherPlayer, currentPlayerToken];
-    console.log(`it is ${currentPlayerToken}'s turn`);
-  };
-
-  const createGameBoardArray = (function () {
-    const gameBoard = ["", "", "", "", "", "", "", "", ""];
-    console.log(`game board created (${BOARDSIZE} by ${BOARDSIZE})`);
-    return gameBoard;
-  })();
 
   function verticalComboGenerator() {
     const maxCombo = 3;
@@ -79,8 +61,63 @@ function tictactoe() {
   horizontalComboGenerator();
   diagonalComboGenerator();
 
+  return { verticalWinCombo, horizontalWinCombo, diagonalWinCombo };
+}
+
+// PANG GAWA NG BOARD DATA
+
+function tictactoe() {
+  const BOARDSIZE = 3;
+
+  let currentRound = 0;
+  let currentPlayerToken = "x";
+
+  function advanceRound() {
+    currentRound++;
+  }
+
+  const checkWhoWin = () => {};
+
+  const checkIfSomeoneWin = () => {};
+
+  const togglePlayer = function () {
+    let otherPlayer = "o";
+    [currentPlayerToken, otherPlayer] = [otherPlayer, currentPlayerToken];
+    console.log(`it is ${currentPlayerToken}'s turn`);
+  };
+
+  const createGameBoardArray = (function () {
+    const gameBoard = ["", "", "", "", "", "", "", "", ""];
+    console.log(`game board created (${BOARDSIZE} by ${BOARDSIZE})`);
+    return gameBoard;
+  })();
+
   return {
     createGameBoardArray,
     togglePlayer,
+    advanceRound,
+    checkWhoWin,
+    checkIfSomeoneWin,
   };
+}
+
+function createPlayer(name1, name2) {
+  const player1 = {
+    name: name1,
+    token: "X",
+  };
+
+  const player2 = {
+    name: name2,
+    token: "o",
+  };
+
+  return { name1, name2 };
+}
+
+function playGame() {
+  const gameLogic = tictactoe();
+  const winningCombos = createWinningCombo();
+
+  const gameBoard = gameLogic.createGameBoardArray;
 }
