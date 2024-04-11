@@ -212,7 +212,24 @@ const playerData = (function () {
     score: 0,
   };
 
-  return { player1, player2 };
+  const addScore = (winner) => {
+    switch (winner) {
+      case "x":
+        player1.score += 1;
+        break;
+
+      case "y":
+        player2.score += 1;
+        break;
+    }
+  };
+
+  const returnScores = () => {
+    console.log(player1.score, player2.score);
+    return [player1.score, player2.score];
+  };
+
+  return { returnScores, addScore };
 })();
 
 const playGame = (function () {
@@ -258,11 +275,11 @@ const controlDom = (function () {
     console.log(playGame.gameLogic.whatIsTheCurrentToken());
     switch (playGame.gameLogic.whatIsTheCurrentToken()) {
       case "x":
-        player1Score.textContent = playerData.player1.score;
+        player1Score.textContent = playerData.returnScores()[0];
         break;
 
       case "o":
-        player2score.textContent = playerData.player2.score;
+        player2score.textContent = playerData.returnScores()[1];
         break;
     }
   };
