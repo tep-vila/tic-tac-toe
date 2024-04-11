@@ -212,6 +212,11 @@ const playGame = (function () {
 
   const gameBoard = gameLogic.createGameBoardArray;
 
+  const transitionToNextRound = () => {
+    gameLogic.advanceRound();
+    gameLogic.togglePlayer();
+  };
+
   const placeToken = (where) => {
     playGame.gameLogic.putTokenInTable(where, playGame.gameBoard);
 
@@ -220,14 +225,12 @@ const playGame = (function () {
         console.log("You win!");
         // palitan dapat to ng win logic
       } else {
-        gameLogic.advanceRound();
-        gameLogic.togglePlayer();
+        transitionToNextRound();
         console.log(gameLogic.whatRoundIsIt());
         console.log("toggled");
       }
     } else {
-      gameLogic.advanceRound();
-      gameLogic.togglePlayer();
+      transitionToNextRound();
       console.log(gameLogic.whatRoundIsIt());
       console.log("toggled");
     }
