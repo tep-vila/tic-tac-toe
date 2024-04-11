@@ -97,7 +97,9 @@ function tictactoe() {
     currentRound++;
   }
 
-  const checkWhoWin = () => {};
+  const whenSomeoneWin = () => {
+    playerData.addScore(currentPlayerToken);
+  };
 
   // dapat mag return to ng boolean. pafix. need din ayusin yung sa placetoken -> pag nag false yung sa checkifsum1 won, mag toggle and add siya ng round.
   const checkIfCurrentPlayerWin = () => {
@@ -172,6 +174,10 @@ function tictactoe() {
     }
   };
 
+  // Pag nag IIFE module, yung closure mamamanipulate mo yung variables don
+  // thru functions na nireturn mo. pag nag return ka ng outer scope na variables
+  // tas nag edit ka thru returned functions, hindi mag rereflect yon
+
   const togglePlayer = function () {
     console.log(`before toggle: ${currentPlayerToken}`);
     let placeHolder = currentPlayerToken;
@@ -191,7 +197,7 @@ function tictactoe() {
     createGameBoardArray,
     togglePlayer,
     advanceRound,
-    checkWhoWin,
+    whenSomeoneWin,
     checkIfCurrentPlayerWin,
     putTokenInTable,
     whatRoundIsIt,
@@ -224,6 +230,10 @@ const playerData = (function () {
     }
   };
 
+  // array ireturn. walang native way
+  // js para mag return ng multiple values so either return [] or {}.
+  // bawal comma: return x, y
+
   const returnScores = () => {
     console.log(player1.score, player2.score);
     return [player1.score, player2.score];
@@ -248,7 +258,8 @@ const playGame = (function () {
 
     if (gameLogic.whatRoundIsIt().currentRound >= 5) {
       if (playGame.gameLogic.checkIfCurrentPlayerWin()) {
-        console.log("You win!");
+        playGame.gameLogic.whenSomeoneWin();
+        controlDom.updateScoreDisplay();
         // palitan dapat to ng win logic
       } else {
         transitionToNextRound();
@@ -271,6 +282,8 @@ const controlDom = (function () {
   const player1Score = document.querySelector(".player.one .actual-score");
   const player2score = document.querySelector(".player.two .actual-score");
 
+  const defaultMessage = "Click on a cell to place token";
+
   const updateScoreDisplay = () => {
     console.log(playGame.gameLogic.whatIsTheCurrentToken());
     switch (playGame.gameLogic.whatIsTheCurrentToken()) {
@@ -284,5 +297,20 @@ const controlDom = (function () {
     }
   };
 
-  return { updateScoreDisplay };
+  const tellWhoWin = () => {
+    switch (playGame.gameLogic.whatIsTheCurrentToken()) {
+      case "x":
+        message.textContent = "Player 1 won!";
+        break;
+
+      case "o":
+        message.textContent = "Player 2 won!";
+        break;
+    }
+  };
+
+  const resetMessage = () => {
+    message.textContent = defaultMessage;
+  };
+  return { updateScoreDisplay, tellWhoWin, resetMessage };
 })();
