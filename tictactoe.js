@@ -85,6 +85,10 @@ function tictactoe() {
     return currentTokenPositionInGameBoard;
   };
 
+  const whatIsTheCurrentToken = () => {
+    return currentPlayerToken;
+  };
+
   const whatRoundIsIt = () => {
     return { currentRound };
   };
@@ -169,7 +173,11 @@ function tictactoe() {
   };
 
   const togglePlayer = function () {
-    [currentPlayerToken, otherPlayer] = [otherPlayer, currentPlayerToken];
+    console.log(`before toggle: ${currentPlayerToken}`);
+    let placeHolder = currentPlayerToken;
+
+    currentPlayerToken = otherPlayer;
+    otherPlayer = placeHolder;
     console.log(`it is ${currentPlayerToken}'s turn`);
   };
 
@@ -189,22 +197,23 @@ function tictactoe() {
     whatRoundIsIt,
     BOARDSIZE,
     findCurrentTokenPositionInGameBoard,
+    whatIsTheCurrentToken,
   };
 }
 
-function createPlayer(name1, name2) {
+const playerData = (function () {
   const player1 = {
-    name: name1,
-    token: "X",
+    token: "x",
+    score: 0,
   };
 
   const player2 = {
-    name: name2,
     token: "o",
+    score: 0,
   };
 
-  return { name1, name2 };
-}
+  return { player1, player2 };
+})();
 
 const playGame = (function () {
   const gameLogic = tictactoe();
@@ -238,4 +247,25 @@ const playGame = (function () {
   };
 
   return { gameLogic, gameBoard, placeToken, winningCombos };
+})();
+
+const controlDom = (function () {
+  const message = document.querySelector(".message");
+  const player1Score = document.querySelector(".player.one .actual-score");
+  const player2score = document.querySelector(".player.two .actual-score");
+
+  const updateScoreDisplay = () => {
+    console.log(playGame.gameLogic.whatIsTheCurrentToken());
+    switch (playGame.gameLogic.whatIsTheCurrentToken()) {
+      case "x":
+        player1Score.textContent = playerData.player1.score;
+        break;
+
+      case "o":
+        player2score.textContent = playerData.player2.score;
+        break;
+    }
+  };
+
+  return { updateScoreDisplay };
 })();

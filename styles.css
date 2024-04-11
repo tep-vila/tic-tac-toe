@@ -34,13 +34,47 @@ body {
   width: 100vw;
 }
 
+.message {
+  margin-top: 2vh;
+}
+
 /* MAIN CONTENT */
 .main-content {
   display: flex;
   justify-content: space-around;
-  color: red;
 }
 /* FOR PLAYER-INFO-SECTION */
+
+.player {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 10vh;
+  width: 18vw;
+  padding: 2vw;
+  font-size: 2rem;
+  border-radius: 0.5rem;
+}
+
+.score-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5vh;
+}
+
+.score-container p {
+  font-size: 10rem;
+}
+
+.player.one {
+  background-color: var(--token-color);
+  border: 3px solid var(--token-color-shadow);
+}
+
+.player.two {
+  background-color: var(--alt-token-color);
+  border: 3px solid var(--alt-token-color-shadow);
+}
 
 /* FOR GAMEBOARD */
 
@@ -59,6 +93,7 @@ body {
   user-select: none; /* Standard syntax */
 }
 
+/* PARA SA CELLS ODD N EVEN */
 .game-board div:nth-child(odd) {
   width: 100%;
   height: 100%;
@@ -87,18 +122,20 @@ body {
   border-radius: 3px 7px 7px 4px;
 }
 
+/* ANIMATION NG CELLS  */
+
 .game-board div:hover {
   transform: translate3d(1.7px, 3px, 0);
   box-shadow: none;
 }
 
 .game-board div:nth-child(odd):active {
-  transform: translate3d(1.7px, 3px, 0);
+  transform: translate3d(2.5px, 3.8px, 0);
   box-shadow: inset 2px 3.5px 0 3px var(--alt-token-color-shadow);
 }
 
 .game-board div:nth-child(even):active {
-  transform: translate3d(1.7px, 3px, 0);
+  transform: translate3d(2.5px, 3.8px, 0);
   box-shadow: inset 2px 3.5px 0 3px var(--token-color-shadow);
 }
 /* CHANGE CELL COLOR IF WINNER. ADD THIS CLASS TO THE CELL */
