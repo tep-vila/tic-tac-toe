@@ -53,6 +53,10 @@ body {
   padding: 1.8rem;
 
   background-color: var(--main-color);
+
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }
 
 .game-board div:nth-child(odd) {
@@ -69,7 +73,7 @@ body {
   height: 100%;
 
   background-color: var(--token-color);
-  border-radius: 4px 7px 7px 4px;
+
   box-shadow: 1.7px 3px 0 3px var(--token-color-shadow);
 }
 
@@ -79,8 +83,25 @@ body {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   color: black;
   cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-radius: 3px 7px 7px 4px;
 }
 
+.game-board div:hover {
+  transform: translate3d(1.7px, 3px, 0);
+  box-shadow: none;
+}
+
+.game-board div:nth-child(odd):active {
+  transform: translate3d(1.7px, 3px, 0);
+  box-shadow: inset 2px 3.5px 0 3px var(--alt-token-color-shadow);
+}
+
+.game-board div:nth-child(even):active {
+  transform: translate3d(1.7px, 3px, 0);
+  box-shadow: inset 2px 3.5px 0 3px var(--token-color-shadow);
+}
+/* CHANGE CELL COLOR IF WINNER. ADD THIS CLASS TO THE CELL */
 .game-board div.win {
   background-color: gold;
 }
