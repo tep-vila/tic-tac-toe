@@ -293,12 +293,19 @@ const playGame = (function () {
       console.log("last round");
       if (!playGame.gameLogic.checkIfCurrentPlayerWin()) {
         console.log("so walang nanalo !!!!!!!!!!");
+        setTimeout(() => {
+          controlDom.displayWhenTie();
+        }, 100);
         playGame.gameLogic.itsTie();
         playGame.gameLogic.resetData();
         playGame.gameLogic.resetTable(gameBoard);
-        setTimeout(controlDom.clearGameBoard(), 10000);
+        setTimeout(() => {
+          controlDom.clearGameBoard();
+        }, 2000);
 
-        setTimeout(controlDom.resetMessage, 3000);
+        setTimeout(() => {
+          controlDom.resetMessage();
+        }, 2000);
         return;
       }
     }
