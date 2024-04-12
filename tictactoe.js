@@ -117,7 +117,7 @@ function tictactoe() {
         ) {
           isThereAPattern = true;
         } else {
-          console.log("bokya");
+          console.log("bokya-horizontal");
         }
       }
     }
@@ -134,7 +134,7 @@ function tictactoe() {
         ) {
           isThereAPattern = true;
         } else {
-          console.log("bokya");
+          console.log("bokya-vertical");
         }
       }
     }
@@ -151,7 +151,7 @@ function tictactoe() {
         ) {
           isThereAPattern = true;
         } else {
-          console.log("bokya");
+          console.log("bokya-diagonal");
         }
       }
     }
@@ -281,6 +281,7 @@ const controlDom = (function () {
   const message = document.querySelector(".message");
   const player1Score = document.querySelector(".player.one .actual-score");
   const player2score = document.querySelector(".player.two .actual-score");
+  const board = document.querySelector(".game-board");
 
   const defaultMessage = "Click on a cell to place token";
 
@@ -312,5 +313,35 @@ const controlDom = (function () {
   const resetMessage = () => {
     message.textContent = defaultMessage;
   };
-  return { updateScoreDisplay, tellWhoWin, resetMessage };
+
+  const displayCellAlreadyTaken = () => {
+    message.textContent = "Cell is already taken!";
+  };
+
+  const displayCurrentPlayer = () => {
+    console.log(playGame.gameLogic.whatIsTheCurrentToken());
+    if (playGame.gameLogic.whatIsTheCurrentToken() === "x") {
+      message.textContent = "It is player 1's turn";
+    } else {
+      message.textContent = "It is player 2's turn";
+    }
+  };
+
+  const putTokenInGameBoardCell = (cell) => {
+    cell.textContent = playGame.gameLogic.whatIsTheCurrentToken();
+  };
+
+  //  check kung cell ba yung napindot. also, check kung may laman na yung cell.
+  board.addEventListener("click", (event) => {
+    console.log(playGame.gameBoard[event.target.id] === "");
+    if (!event.target.classList.contains("game-board")) {
+      if (playGame.gameBoard[event.target.id] === "") {
+        playGame.placeToken(event.target.id);
+        putTokenInGameBoardCell(event.target);
+        displayCurrentPlayer();
+      } else displayCellAlreadyTaken();
+    } else return;
+  });
+
+  return { updateScoreDisplay, tellWhoWin, resetMessage, displayCurrentPlayer };
 })();
