@@ -72,6 +72,7 @@ function tictactoe() {
   let currentRound = 1;
   let currentPlayerToken = "x";
   let otherPlayer = "o";
+  let tie;
 
   const findCurrentTokenPositionInGameBoard = () => {
     let currentTokenPositionInGameBoard = [];
@@ -83,6 +84,21 @@ function tictactoe() {
       }
     }
     return currentTokenPositionInGameBoard;
+  };
+
+  const resetData = () => {
+    currentRound = 1;
+    currentPlayerToken = "x";
+    otherPlayer = "o";
+    tie = undefined;
+  };
+
+  const checkIfTie = () => {
+    return tie;
+  };
+
+  const itsTie = () => {
+    tie = true;
   };
 
   const whatIsTheCurrentToken = () => {
@@ -174,6 +190,12 @@ function tictactoe() {
     }
   };
 
+  const resetTable = (gameBoard) => {
+    for (let i = 0; i < 9; i++) {
+      gameBoard[i] = "";
+    }
+  };
+
   // Pag nag IIFE module, yung closure mamamanipulate mo yung variables don
   // thru functions na nireturn mo. pag nag return ka ng outer scope na variables
   // tas nag edit ka thru returned functions, hindi mag rereflect yon
@@ -188,7 +210,7 @@ function tictactoe() {
   };
 
   const createGameBoardArray = (function () {
-    const gameBoard = ["", "", "", "", "", "", "", "", ""];
+    let gameBoard = ["", "", "", "", "", "", "", "", ""];
     console.log(`game board created (${BOARDSIZE} by ${BOARDSIZE})`);
     return gameBoard;
   })();
@@ -204,6 +226,10 @@ function tictactoe() {
     BOARDSIZE,
     findCurrentTokenPositionInGameBoard,
     whatIsTheCurrentToken,
+    itsTie,
+    checkIfTie,
+    resetData,
+    resetTable,
   };
 }
 
@@ -222,10 +248,12 @@ const playerData = (function () {
     switch (winner) {
       case "x":
         player1.score += 1;
+        console.log("plus 1");
         break;
 
-      case "y":
+      case "o":
         player2.score += 1;
+        console.log("plus 1");
         break;
     }
   };
@@ -246,23 +274,55 @@ const playGame = (function () {
   const gameLogic = tictactoe();
   const winningCombos = createWinningCombo(gameLogic.BOARDSIZE);
 
-  const gameBoard = gameLogic.createGameBoardArray;
+  let gameBoard = gameLogic.createGameBoardArray;
 
   const transitionToNextRound = () => {
     gameLogic.advanceRound();
     gameLogic.togglePlayer();
   };
 
+  const newRound = () => {
+    for (let i = 0; i < 9; i++)
+      playGame.gameLogic.putTokenInTable(i, gameBoard);
+  };
+
   const placeToken = (where) => {
     playGame.gameLogic.putTokenInTable(where, playGame.gameBoard);
+
+    if (gameLogic.whatRoundIsIt().currentRound === 9) {
+      console.log("last round");
+      if (!playGame.gameLogic.checkIfCurrentPlayerWin()) {
+        console.log("so walang nanalo !!!!!!!!!!");
+        playGame.gameLogic.itsTie();
+        playGame.gameLogic.resetData();
+        playGame.gameLogic.resetTable(gameBoard);
+        setTimeout(controlDom.clearGameBoard(), 10000);
+
+        setTimeout(controlDom.resetMessage, 3000);
+        return;
+      }
+    }
 
     if (gameLogic.whatRoundIsIt().currentRound >= 5) {
       if (playGame.gameLogic.checkIfCurrentPlayerWin()) {
         playGame.gameLogic.whenSomeoneWin();
+        controlDom.tellWhoWin();
         controlDom.updateScoreDisplay();
+        console.log("b4 add score");
+        playGame.gameLogic.resetData();
+        playGame.gameLogic.resetTable(gameBoard);
+        setTimeout(() => {
+          controlDom.clearGameBoard();
+        }, 2000);
+
+        setTimeout(() => {
+          controlDom.resetMessage();
+        }, 2000);
+        return;
         // palitan dapat to ng win logic
       } else {
         transitionToNextRound();
+
         console.log(gameLogic.whatRoundIsIt());
         console.log("toggled");
       }
@@ -271,10 +331,12 @@ const playGame = (function () {
       console.log(gameLogic.whatRoundIsIt());
       console.log("toggled");
     }
+
+    controlDom.displayCurrentPlayer();
     // pwede pa imrpove tong nesting na to, gawing if round 5 pataas na, tas yung checking ng winner gawin sa switch statement
   };
 
-  return { gameLogic, gameBoard, placeToken, winningCombos };
+  return { gameLogic, gameBoard, placeToken, winningCombos, newRound };
 })();
 
 const controlDom = (function () {
@@ -283,7 +345,13 @@ const controlDom = (function () {
   const player2score = document.querySelector(".player.two .actual-score");
   const board = document.querySelector(".game-board");
 
-  const defaultMessage = "Click on a cell to place token";
+  const defaultMessage = "Click on a cell to place token. Player 1's turn.";
+
+  const clearGameBoard = () => {
+    board.querySelectorAll("div").forEach((div) => {
+      div.textContent = "";
+    });
+  };
 
   const updateScoreDisplay = () => {
     console.log(playGame.gameLogic.whatIsTheCurrentToken());
@@ -327,6 +395,10 @@ const controlDom = (function () {
     }
   };
 
+  const displayWhenTie = () => {
+    message.textContent = "It's a tie";
+  };
+
   const putTokenInGameBoardCell = (cell) => {
     cell.textContent = playGame.gameLogic.whatIsTheCurrentToken();
   };
@@ -336,12 +408,23 @@ const controlDom = (function () {
     console.log(playGame.gameBoard[event.target.id] === "");
     if (!event.target.classList.contains("game-board")) {
       if (playGame.gameBoard[event.target.id] === "") {
-        playGame.placeToken(event.target.id);
         putTokenInGameBoardCell(event.target);
-        displayCurrentPlayer();
+
+        playGame.placeToken(event.target.id);
       } else displayCellAlreadyTaken();
-    } else return;
+    }
+
+    if (playGame.gameLogic.checkIfTie()) {
+      displayWhenTie();
+    }
   });
 
-  return { updateScoreDisplay, tellWhoWin, resetMessage, displayCurrentPlayer };
+  return {
+    updateScoreDisplay,
+    tellWhoWin,
+    resetMessage,
+    displayCurrentPlayer,
+    displayWhenTie,
+    clearGameBoard,
+  };
 })();
